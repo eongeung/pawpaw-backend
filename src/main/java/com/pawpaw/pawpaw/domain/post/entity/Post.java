@@ -1,0 +1,37 @@
+package com.pawpaw.pawpaw.domain.post.entity;
+
+import com.pawpaw.pawpaw.domain.pet.entity.Pet;
+import com.pawpaw.pawpaw.domain.user.entity.User;
+import com.pawpaw.pawpaw.global.entity.BaseEntity;
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "posts")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
+public class Post extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pet_id")
+    private Pet pet;
+
+    @Column(nullable = false)
+    private String category;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
+}
