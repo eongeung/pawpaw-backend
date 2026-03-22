@@ -50,4 +50,8 @@ public class WalkRequest extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private WalkRequestStatus status;
+
+    public void updateStatus(WalkRequestStatus status) {
+        this.status = status;
+    }
 }
