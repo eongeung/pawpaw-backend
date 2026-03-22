@@ -1,5 +1,5 @@
 package com.pawpaw.pawpaw.domain.user.entity;
-
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.pawpaw.pawpaw.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,7 +37,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
