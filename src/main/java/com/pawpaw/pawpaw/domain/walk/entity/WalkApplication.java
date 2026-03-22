@@ -37,4 +37,8 @@ public class WalkApplication {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime appliedAt;
+
+    public void updateStatus(WalkApplicationStatus status) {
+        this.status = status;
+    }
 }
