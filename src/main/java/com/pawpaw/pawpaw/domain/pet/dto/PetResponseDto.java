@@ -1,4 +1,3 @@
-// PetResponseDto.java
 package com.pawpaw.pawpaw.domain.pet.dto;
 
 import com.pawpaw.pawpaw.domain.pet.entity.Pet;
