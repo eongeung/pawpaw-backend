@@ -10,6 +10,7 @@ public class MessageResponseDto {
 
     private Long id;
     private Long roomId;
+    private Long senderId;
     private String senderNickname;
     private String content;
     private Boolean isRead;
@@ -18,6 +19,7 @@ public class MessageResponseDto {
     public MessageResponseDto(Message message) {
         this.id = message.getId();
         this.roomId = message.getChatRoom().getId();
+        this.senderId = message.getSender().getId();
         this.senderNickname = message.getSender().getNickname();
         this.content = message.getContent();
         this.isRead = message.getIsRead();

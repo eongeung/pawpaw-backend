@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class WalkRequestResponseDto {
 
     private Long id;
+    private Long userId;
     private String title;
     private String content;
     private String nickname;
@@ -26,6 +27,7 @@ public class WalkRequestResponseDto {
 
     public WalkRequestResponseDto(WalkRequest walkRequest) {
         this.id = walkRequest.getId();
+        this.userId = walkRequest.getUser().getId();
         this.title = walkRequest.getTitle();
         this.content = walkRequest.getContent();
         this.nickname = walkRequest.getUser().getNickname();

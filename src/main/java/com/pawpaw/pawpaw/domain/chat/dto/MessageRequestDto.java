@@ -6,4 +6,5 @@ import lombok.Getter;
 public class MessageRequestDto {
     private Long roomId;
     private String content;
+    private Long senderId;
 }

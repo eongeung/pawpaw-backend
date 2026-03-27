@@ -13,6 +13,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -42,8 +43,8 @@ public class ChatController {
     }
 
     @MessageMapping("/chat/message")
-    public void sendMessage(MessageRequestDto dto, @AuthenticationPrincipal User user) {
-        MessageResponseDto message = chatService.saveMessage(dto, user);
+    public void sendMessage(MessageRequestDto dto) {
+        MessageResponseDto message = chatService.saveMessage(dto);
         messagingTemplate.convertAndSend("/sub/chat/room/" + dto.getRoomId(), message);
     }
 }
