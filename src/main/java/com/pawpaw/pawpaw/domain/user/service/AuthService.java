@@ -66,7 +66,7 @@ public class AuthService {
                         )
                 );
 
-        return new TokenResponseDto(accessToken, refreshToken);
+        return new TokenResponseDto(accessToken, refreshToken, user.getId());
     }
 
     @Transactional
@@ -76,6 +76,8 @@ public class AuthService {
         }
 
         String email = jwtTokenProvider.getEmailFromToken(refreshToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
         RefreshToken savedToken = refreshTokenRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("refreshToken이 존재하지 않습니다."));
 
@@ -87,6 +89,6 @@ public class AuthService {
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(email);
         savedToken.updateToken(newRefreshToken);
 
-        return new TokenResponseDto(newAccessToken, newRefreshToken);
+        return new TokenResponseDto(newAccessToken, newRefreshToken, user.getId());
     }
 }

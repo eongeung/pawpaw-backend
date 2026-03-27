@@ -6,6 +6,9 @@ import com.pawpaw.pawpaw.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "posts")
 @Getter
@@ -34,6 +37,10 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<PostLike> likes = new ArrayList<>();
 
     public void update(String title, String content, String category) {
         this.title = title;
