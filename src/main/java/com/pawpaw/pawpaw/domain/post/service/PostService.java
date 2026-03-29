@@ -24,14 +24,9 @@ public class PostService {
     @Transactional
     public PostResponseDto createPost(PostRequestDto dto, User user) {
         Pet pet = null;
-        if (dto.getPetId() != null) {
-            pet = petRepository.findById(dto.getPetId())
-                    .orElseThrow(() -> new IllegalArgumentException("펫을 찾을 수 없습니다."));
-        }
 
         Post post = Post.builder()
                 .user(user)
-                .pet(pet)
                 .category(dto.getCategory())
                 .title(dto.getTitle())
                 .content(dto.getContent())

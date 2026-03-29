@@ -25,10 +25,6 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pet_id")
-    private Pet pet;
-
     @Column(nullable = false)
     private String category;
 
