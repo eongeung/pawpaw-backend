@@ -31,9 +31,7 @@ public class User extends BaseEntity implements UserDetails {
     private String nickname;
 
     private String profileImg;
-    private String address;
-    private Double lat;
-    private Double lng;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

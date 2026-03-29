@@ -35,9 +35,6 @@ public class AuthService {
                 .email(dto.getEmail())
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .nickname(dto.getNickname())
-                .address(dto.getAddress())
-                .lat(dto.getLat())
-                .lng(dto.getLng())
                 .build();
 
         userRepository.save(user);
