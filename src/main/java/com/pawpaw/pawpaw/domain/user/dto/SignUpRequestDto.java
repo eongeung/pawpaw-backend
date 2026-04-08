@@ -16,8 +16,4 @@ public class SignUpRequestDto {
 
     @NotBlank
     private String nickname;
-
-    private String address;
-    private Double lat;
-    private Double lng;
 }
