@@ -51,14 +51,17 @@ public class HospitalService {
 
         return response.getBody().getItems().stream()
                 .map(item -> {
-                    Hospital hospital = Hospital.builder()
-                            .name(item.getTitle().replaceAll("<[^>]*>", ""))
-                            .address(item.getRoadAddress().isEmpty() ? item.getAddress() : item.getRoadAddress())
-                            .lat(Double.parseDouble(item.getMapy()) / 1e7)
-                            .lng(Double.parseDouble(item.getMapx()) / 1e7)
-                            .phone(item.getTelephone())
-                            .build();
-                    return new HospitalResponseDto(hospitalRepository.save(hospital));
+                    String name = item.getTitle().replaceAll("<[^>]*>", "");
+                    String address = item.getRoadAddress().isEmpty() ? item.getAddress() : item.getRoadAddress();
+                    Hospital hospital = hospitalRepository.findByNameAndAddress(name, address)
+                            .orElseGet(() -> hospitalRepository.save(Hospital.builder()
+                                    .name(name)
+                                    .address(address)
+                                    .lat(Double.parseDouble(item.getMapy()) / 1e7)
+                                    .lng(Double.parseDouble(item.getMapx()) / 1e7)
+                                    .phone(item.getTelephone())
+                                    .build()));
+                    return new HospitalResponseDto(hospital);
                 })
                 .collect(Collectors.toList());
     }
