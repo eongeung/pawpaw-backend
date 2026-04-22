@@ -5,10 +5,10 @@ import com.pawpaw.pawpaw.domain.chat.dto.MessageRequestDto;
 import com.pawpaw.pawpaw.domain.chat.dto.MessageResponseDto;
 import com.pawpaw.pawpaw.domain.chat.service.ChatService;
 import com.pawpaw.pawpaw.domain.user.entity.User;
+import com.pawpaw.pawpaw.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +22,7 @@ public class ChatController {
 
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final UserRepository userRepository;
 
     @PostMapping("/api/chat/rooms")
     public ResponseEntity<ChatRoomResponseDto> createChatRoom(
@@ -43,8 +44,10 @@ public class ChatController {
     }
 
     @MessageMapping("/chat/message")
-    public void sendMessage(MessageRequestDto dto) {
-        MessageResponseDto message = chatService.saveMessage(dto);
+    public void sendMessage(MessageRequestDto dto, Principal principal) {
+        User sender = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new IllegalArgumentException("인증된 사용자를 찾을 수 없습니다."));
+        MessageResponseDto message = chatService.saveMessage(dto, sender);
         messagingTemplate.convertAndSend("/sub/chat/room/" + dto.getRoomId(), message);
     }
 }
