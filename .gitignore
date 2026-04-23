@@ -7,6 +7,7 @@ build/
 # 환경설정 파일
 src/main/resources/application-local.yaml
 *.sql
+docs/work-log.md
 
 ### STS ###
 .apt_generated
