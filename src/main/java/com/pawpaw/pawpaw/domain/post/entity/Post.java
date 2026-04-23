@@ -38,6 +38,10 @@ public class Post extends BaseEntity {
     @Builder.Default
     private List<PostLike> likes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Comment> comments = new ArrayList<>();
+
     public void update(String title, String content, String category) {
         this.title = title;
         this.content = content;

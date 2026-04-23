@@ -26,6 +26,11 @@ public class PostController {
         return ResponseEntity.ok(postService.createPost(dto, user));
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<List<PostResponseDto>> getMyPosts(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(postService.getMyPosts(user));
+    }
+
     @GetMapping
     public ResponseEntity<List<PostResponseDto>> getAllPosts(
             @RequestParam(required = false) String category) {

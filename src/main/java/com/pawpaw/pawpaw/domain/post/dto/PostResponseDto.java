@@ -15,6 +15,7 @@ public class PostResponseDto {
     private String nickname;
     private LocalDateTime createdAt;
     private int likeCount;
+    private int commentCount;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
@@ -24,5 +25,6 @@ public class PostResponseDto {
         this.nickname = post.getUser().getNickname();
         this.createdAt = post.getCreatedAt();
         this.likeCount = post.getLikes().size();
+        this.commentCount = post.getComments().size();
     }
 }
