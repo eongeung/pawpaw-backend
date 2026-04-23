@@ -11,11 +11,3 @@ spring:
 
 server:
   port: 8080
-
-# 운영 환경에서는 반드시 최소 64바이트 이상의 랜덤 문자열로 교체하거나
-# 환경 변수 JWT_SECRET으로 주입하세요.
-# 예시: openssl rand -base64 64
-jwt:
-  secret: ${JWT_SECRET:CHANGE_ME_IN_PRODUCTION}
-  access-expiration: 1800000
-  refresh-expiration: 604800000
