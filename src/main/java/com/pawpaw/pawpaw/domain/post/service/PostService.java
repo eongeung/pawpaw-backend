@@ -71,6 +71,14 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> getMyPosts(User user) {
+        return postRepository.findByUserIdOrderByCreatedAtDesc(user.getId())
+                .stream()
+                .map(PostResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void deletePost(Long postId, User user) {
         Post post = postRepository.findById(postId)
