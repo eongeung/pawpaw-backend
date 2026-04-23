@@ -1,5 +1,6 @@
 package com.pawpaw.pawpaw.domain.walk.service;
 
+
 import com.pawpaw.pawpaw.domain.pet.entity.Pet;
 import com.pawpaw.pawpaw.domain.pet.repository.PetRepository;
 import com.pawpaw.pawpaw.domain.walk.dto.WalkRequestDto;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,21 @@ public class WalkRequestService {
     public WalkRequestResponseDto createWalkRequest(WalkRequestDto dto, User user) {
         Pet pet = petRepository.findById(dto.getPetId())
                 .orElseThrow(() -> new IllegalArgumentException("펫을 찾을 수 없습니다."));
+
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+
+        if (dto.getWalkDate().isBefore(today)) {
+            throw new IllegalArgumentException("오늘 이전 날짜는 선택할 수 없습니다.");
+        }
+
+        if (dto.getWalkDate().isEqual(today) && dto.getStartTime().isBefore(now)) {
+            throw new IllegalArgumentException("현재 시간 이전은 선택할 수 없습니다.");
+        }
+
+        if (dto.getEndTime().isBefore(dto.getStartTime())) {
+            throw new IllegalArgumentException("종료 시간은 시작 시간 이후여야 합니다.");
+        }
 
         WalkRequest walkRequest = WalkRequest.builder()
                 .user(user)
@@ -56,6 +74,14 @@ public class WalkRequestService {
         WalkRequest walkRequest = walkRequestRepository.findById(walkRequestId)
                 .orElseThrow(() -> new IllegalArgumentException("산책 요청을 찾을 수 없습니다."));
         return new WalkRequestResponseDto(walkRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public List<WalkRequestResponseDto> getMyWalkRequests(User user) {
+        return walkRequestRepository.findByUserIdOrderByCreatedAtDesc(user.getId())
+                .stream()
+                .map(WalkRequestResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
