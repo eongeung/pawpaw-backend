@@ -13,6 +13,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
 import java.security.Principal;
 import java.util.List;
 
@@ -45,8 +47,7 @@ public class ChatController {
 
     @MessageMapping("/chat/message")
     public void sendMessage(MessageRequestDto dto, Principal principal) {
-        User sender = userRepository.findByEmail(principal.getName())
-                .orElseThrow(() -> new IllegalArgumentException("인증된 사용자를 찾을 수 없습니다."));
+        User sender = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
         MessageResponseDto message = chatService.saveMessage(dto, sender);
         messagingTemplate.convertAndSend("/sub/chat/room/" + dto.getRoomId(), message);
     }
