@@ -19,6 +19,9 @@ public class JwtTokenProvider {
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.access-expiration}") long accessExpiration,
             @Value("${jwt.refresh-expiration}") long refreshExpiration) {
+        if (secret.getBytes().length < 64) {
+            throw new IllegalArgumentException("JWT secret은 최소 64바이트 이상이어야 합니다.");
+        }
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.accessExpiration = accessExpiration;
         this.refreshExpiration = refreshExpiration;

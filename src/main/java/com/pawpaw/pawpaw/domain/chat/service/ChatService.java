@@ -65,10 +65,7 @@ public class ChatService {
     }
 
     @Transactional
-    public MessageResponseDto saveMessage(MessageRequestDto dto) {
-        User sender = userRepository.findById(dto.getSenderId())
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-
+    public MessageResponseDto saveMessage(MessageRequestDto dto, User sender) {
         ChatRoom chatRoom = chatRoomRepository.findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다."));
 
