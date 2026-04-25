@@ -45,19 +45,19 @@ public class HospitalService {
             return new ArrayList<>();
         }
 
-        return response.getBody().getDocuments().stream()
-                .map(doc -> {
-                    String address = doc.getRoadAddressName() != null && !doc.getRoadAddressName().isEmpty()
-                            ? doc.getRoadAddressName()
-                            : doc.getAddressName();
-                    Hospital hospital = Hospital.builder()
-                            .name(doc.getPlaceName())
-                            .address(address)
-                            .lat(Double.parseDouble(doc.getY()))
-                            .lng(Double.parseDouble(doc.getX()))
-                            .phone(doc.getPhone())
-                            .build();
-                    return new HospitalResponseDto(hospitalRepository.save(hospital));
+        return response.getBody().getItems().stream()
+                .map(item -> {
+                    String name = item.getTitle().replaceAll("<[^>]*>", "");
+                    String address = item.getRoadAddress().isEmpty() ? item.getAddress() : item.getRoadAddress();
+                    Hospital hospital = hospitalRepository.findByNameAndAddress(name, address)
+                            .orElseGet(() -> hospitalRepository.save(Hospital.builder()
+                                    .name(name)
+                                    .address(address)
+                                    .lat(Double.parseDouble(item.getMapy()) / 1e7)
+                                    .lng(Double.parseDouble(item.getMapx()) / 1e7)
+                                    .phone(item.getTelephone())
+                                    .build()));
+                    return new HospitalResponseDto(hospital);
                 })
                 .collect(Collectors.toList());
     }
