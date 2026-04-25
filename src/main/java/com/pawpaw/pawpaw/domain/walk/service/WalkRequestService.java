@@ -30,6 +30,10 @@ public class WalkRequestService {
         Pet pet = petRepository.findById(dto.getPetId())
                 .orElseThrow(() -> new IllegalArgumentException("펫을 찾을 수 없습니다."));
 
+        if (!pet.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("본인의 펫으로만 산책 요청을 등록할 수 있습니다.");
+        }
+
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
 

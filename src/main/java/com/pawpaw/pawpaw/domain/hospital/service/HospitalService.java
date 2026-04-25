@@ -3,7 +3,7 @@ package com.pawpaw.pawpaw.domain.hospital.service;
 import com.pawpaw.pawpaw.domain.hospital.dto.HospitalResponseDto;
 import com.pawpaw.pawpaw.domain.hospital.dto.HospitalReviewRequestDto;
 import com.pawpaw.pawpaw.domain.hospital.dto.HospitalReviewResponseDto;
-import com.pawpaw.pawpaw.domain.hospital.dto.NaverSearchResponse;
+import com.pawpaw.pawpaw.domain.hospital.dto.KakaoSearchResponse;
 import com.pawpaw.pawpaw.domain.hospital.entity.Hospital;
 import com.pawpaw.pawpaw.domain.hospital.entity.HospitalReview;
 import com.pawpaw.pawpaw.domain.hospital.repository.HospitalRepository;
@@ -28,37 +28,36 @@ public class HospitalService {
     private final HospitalReviewRepository hospitalReviewRepository;
     private final RestTemplate restTemplate;
 
-    @Value("${naver.search.client-id}")
-    private String clientId;
-
-    @Value("${naver.search.client-secret}")
-    private String clientSecret;
+    @Value("${kakao.rest-api-key}")
+    private String kakaoRestApiKey;
 
     public List<HospitalResponseDto> searchHospitals(String query) {
-        String url = "https://openapi.naver.com/v1/search/local.json?query=" + query + "+동물병원&display=10&sort=comment";
+        String url = "https://dapi.kakao.com/v2/local/search/keyword.json?query=" + query + "+동물병원&size=15";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Naver-Client-Id", clientId);
-        headers.set("X-Naver-Client-Secret", clientSecret);
+        headers.set("Authorization", "KakaoAK " + kakaoRestApiKey);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<NaverSearchResponse> response = restTemplate.exchange(
-                url, HttpMethod.GET, entity, NaverSearchResponse.class);
+        ResponseEntity<KakaoSearchResponse> response = restTemplate.exchange(
+                url, HttpMethod.GET, entity, KakaoSearchResponse.class);
 
-        if (response.getBody() == null || response.getBody().getItems() == null) {
+        if (response.getBody() == null || response.getBody().getDocuments() == null) {
             return new ArrayList<>();
         }
 
         return response.getBody().getItems().stream()
                 .map(item -> {
-                    Hospital hospital = Hospital.builder()
-                            .name(item.getTitle().replaceAll("<[^>]*>", ""))
-                            .address(item.getRoadAddress().isEmpty() ? item.getAddress() : item.getRoadAddress())
-                            .lat(Double.parseDouble(item.getMapy()) / 1e7)
-                            .lng(Double.parseDouble(item.getMapx()) / 1e7)
-                            .phone(item.getTelephone())
-                            .build();
-                    return new HospitalResponseDto(hospitalRepository.save(hospital));
+                    String name = item.getTitle().replaceAll("<[^>]*>", "");
+                    String address = item.getRoadAddress().isEmpty() ? item.getAddress() : item.getRoadAddress();
+                    Hospital hospital = hospitalRepository.findByNameAndAddress(name, address)
+                            .orElseGet(() -> hospitalRepository.save(Hospital.builder()
+                                    .name(name)
+                                    .address(address)
+                                    .lat(Double.parseDouble(item.getMapy()) / 1e7)
+                                    .lng(Double.parseDouble(item.getMapx()) / 1e7)
+                                    .phone(item.getTelephone())
+                                    .build()));
+                    return new HospitalResponseDto(hospital);
                 })
                 .collect(Collectors.toList());
     }
