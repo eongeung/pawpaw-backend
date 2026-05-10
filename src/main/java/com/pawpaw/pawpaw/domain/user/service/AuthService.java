@@ -29,6 +29,9 @@ public class AuthService {
     @Value("${kakao.rest-api-key}")
     private String kakaoRestApiKey;
 
+    @Value("${kakao.client-secret}")
+    private String kakaoClientSecret;
+
     @Transactional
     public void signUp(SignUpRequestDto dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
@@ -78,6 +81,7 @@ public class AuthService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoRestApiKey);
+        params.add("client_secret", kakaoClientSecret);
         params.add("redirect_uri", redirectUri);
         params.add("code", code);
 
@@ -148,7 +152,7 @@ public class AuthService {
                         )
                 );
 
-        return new TokenResponseDto(accessToken, refreshToken, user.getId());
+        return new TokenResponseDto(accessToken, refreshToken, user.getId(), user.getEmail(), user.getNickname());
     }
 
     @Transactional
@@ -171,6 +175,6 @@ public class AuthService {
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(email);
         savedToken.updateToken(newRefreshToken);
 
-        return new TokenResponseDto(newAccessToken, newRefreshToken, user.getId());
+        return new TokenResponseDto(newAccessToken, newRefreshToken, user.getId(), user.getEmail(), user.getNickname());
     }
 }
