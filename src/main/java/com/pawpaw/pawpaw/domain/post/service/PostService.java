@@ -52,6 +52,14 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
+    public List<PostResponseDto> getMyPosts(User user) {
+        return postRepository.findByUserIdOrderByCreatedAtDesc(user.getId())
+                .stream()
+                .map(PostResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
