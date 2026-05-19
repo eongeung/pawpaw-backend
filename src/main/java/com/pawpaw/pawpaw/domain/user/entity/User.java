@@ -31,8 +31,13 @@ public class User extends BaseEntity implements UserDetails {
     private String nickname;
 
     private String profileImg;
-
     private String address;
+    private String phoneNumber;
+
+    public void updateProfile(String nickname, String address) {
+        if (nickname != null && !nickname.isBlank()) this.nickname = nickname;
+        if (address != null) this.address = address;
+    }
 
     public void update(String nickname, String address) {
         if (nickname != null && !nickname.isBlank()) this.nickname = nickname;

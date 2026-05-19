@@ -1,7 +1,8 @@
 package com.pawpaw.pawpaw.domain.user.service;
 
+import com.pawpaw.pawpaw.domain.user.dto.UpdateProfileRequestDto;
+import com.pawpaw.pawpaw.domain.user.dto.UserProfileResponseDto;
 import com.pawpaw.pawpaw.domain.user.dto.UserResponseDto;
-import com.pawpaw.pawpaw.domain.user.dto.UserUpdateRequestDto;
 import com.pawpaw.pawpaw.domain.user.entity.User;
 import com.pawpaw.pawpaw.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +21,10 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto updateMe(UserUpdateRequestDto dto, User user) {
-        if (!user.getNickname().equals(dto.getNickname()) && userRepository.existsByNickname(dto.getNickname())) {
-            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
-        }
+    public UserProfileResponseDto updateMyProfile(User user, UpdateProfileRequestDto dto) {
         User managed = userRepository.findById(user.getId())
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        managed.update(dto.getNickname(), dto.getAddress());
-        return new UserResponseDto(managed);
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+        managed.updateProfile(dto.getNickname(), dto.getAddress());
+        return new UserProfileResponseDto(managed);
     }
 }

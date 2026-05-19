@@ -52,6 +52,14 @@ public class WalkRequestService {
     }
 
     @Transactional(readOnly = true)
+    public List<WalkRequestResponseDto> getMyWalkRequests(User user) {
+        return walkRequestRepository.findByUserIdOrderByCreatedAtDesc(user.getId())
+                .stream()
+                .map(WalkRequestResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public WalkRequestResponseDto getWalkRequest(Long walkRequestId) {
         WalkRequest walkRequest = walkRequestRepository.findById(walkRequestId)
                 .orElseThrow(() -> new IllegalArgumentException("산책 요청을 찾을 수 없습니다."));

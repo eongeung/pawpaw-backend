@@ -31,6 +31,11 @@ public class WalkRequestController {
         return ResponseEntity.ok(walkRequestService.getAllWalkRequests());
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<List<WalkRequestResponseDto>> getMyWalkRequests(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(walkRequestService.getMyWalkRequests(user));
+    }
+
     @GetMapping("/{walkRequestId}")
     public ResponseEntity<WalkRequestResponseDto> getWalkRequest(@PathVariable Long walkRequestId) {
         return ResponseEntity.ok(walkRequestService.getWalkRequest(walkRequestId));
